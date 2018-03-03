@@ -1,0 +1,15 @@
+{
+    "name": "s-ichikawa/react-chat",
+    "description": "chat system with react-php",
+    "type": "project",
+    "require": {
+        "react/socket": "^0.8.10"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "s-ichikawa",
+            "email": "ichikawa.shingo.0829@gmail.com"
+        }
+    ]
+}
