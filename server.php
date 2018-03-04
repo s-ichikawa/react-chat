@@ -5,7 +5,9 @@ require_once './vendor/autoload.php';
 require_once './ConnectionPool.php';
 
 $loop = \React\EventLoop\Factory::create();
-$socket = new \React\Socket\Server('127.0.0.1:8080', $loop);
+
+$host = getenv('HOSTNAME');
+$socket = new \React\Socket\Server(gethostbyname($host) . ':8080', $loop);
 $pool = new ConnectionPool();
 
 $socket->on('connection', function (\React\Socket\ConnectionInterface $connection) use ($pool) {
