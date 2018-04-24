@@ -5,6 +5,15 @@
     "require": {
         "react/socket": "^0.8.10"
     },
+    "autoload": {
+        "psr-4": {
+            "Example\\": "example"
+        }
+    },
+    "scripts": {
+        "chat:server": "php -f example/Chat/server.php",
+        "chat:client": "php -f example/Chat/client.php"
+    },
     "license": "MIT",
     "authors": [
         {

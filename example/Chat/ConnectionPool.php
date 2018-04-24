@@ -1,6 +1,5 @@
 <?php
-
-namespace ReactChat;
+namespace Example\Chat;
 
 use React\Socket\ConnectionInterface;
 
