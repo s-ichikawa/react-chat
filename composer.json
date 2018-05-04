@@ -3,7 +3,8 @@
     "description": "chat system with react-php",
     "type": "project",
     "require": {
-        "react/socket": "^0.8.10"
+        "react/socket": "^0.8.10",
+        "react/http": "^0.8.3"
     },
     "autoload": {
         "psr-4": {
