@@ -56,12 +56,12 @@ class ConnectionPool
      */
     protected function sendAll($data, ConnectionInterface $except)
     {
-        foreach ($this->connection as $conn) {
+        foreach ($this->connection as $key => $conn) {
             if ($conn == $except) {
                 continue;
             }
 
-            $conn->write($data);
+            $conn->write($key . '::' . $data);
         }
     }
 }
