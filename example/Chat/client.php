@@ -13,7 +13,6 @@ use React\Stream\WritableResourceStream;
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 $loop = Factory::create();
-var_dump(get_class($loop));
 $connector = new Connector($loop);
 $stdin = new ReadableResourceStream(STDIN, $loop);
 $stdout = new WritableResourceStream(STDOUT, $loop);
@@ -25,8 +24,8 @@ $connector
     ->then(function (ConnectionInterface $conn) use ($stdin, $stdout) {
         $stdin->pipe($conn)->pipe($stdout);
 
-    }, function (Exception $exception) use ($loop, $stdout) {
-        $stdout->write($exception->getMessage());
+    }, function (Exception $exception) use ($loop) {
+
     });
 $loop->run();
 
