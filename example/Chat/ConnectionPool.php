@@ -1,4 +1,5 @@
 <?php
+
 namespace Example\Chat;
 
 use React\Socket\ConnectionInterface;
@@ -9,6 +10,24 @@ class ConnectionPool
      * @var \SplObjectStorage
      */
     private $connection;
+
+    /**
+     * @param $connection ConnectionInterface
+     * @return mixed
+     */
+    public function getConnectionData(ConnectionInterface $connection)
+    {
+        return $this->connection->offsetGet($connection);
+    }
+
+    /**
+     * @param $connection ConnectionInterface
+     * @param array $data
+     */
+    public function setConnectionData(ConnectionInterface $connection, $data = [])
+    {
+        $this->connection->offsetSet($connection, $data);
+    }
 
     /**
      * ConnectionPool constructor.
@@ -24,12 +43,10 @@ class ConnectionPool
      */
     public function add(ConnectionInterface $connection)
     {
-        $connection->write("Hi\n");
+        $connection->write("Hi\nEnter your name:");
 
         $this->initEvents($connection);
-        $this->connection->attach($connection);
-
-        $this->sendAll("New User enters the chat\n", $connection);
+        $this->setConnectionData($connection, []);
     }
 
     /**
@@ -40,13 +57,38 @@ class ConnectionPool
     protected function initEvents(ConnectionInterface $connection)
     {
         $connection->on('data', function ($data) use ($connection) {
-            $this->sendAll($data, $connection);
+            $connectionData = $this->getConnectionData($connection);
+
+            if (empty($connectionData)) {
+                $this->addNewMember($data, $connection);
+                return;
+            }
+
+            $name = $connectionData['name'];
+            $this->sendAll("$name: $data", $connection);
         });
 
         $connection->on('close', function () use ($connection) {
-            $this->connection->detach($connection);
-            $this->sendAll("A user leaves the chat\n", $connection);
+            $data = $this->getConnectionData($connection);
+            $name = $data['name'] ?? '';
+
+            $this->connection->offsetUnset($connection);
+            $this->sendAll("User $name leaves the chat\n", $connection);
         });
+    }
+
+    protected function addNewMember($name, ConnectionInterface $connection)
+    {
+        $name = str_replace([
+            "\n",
+            "\r",
+        ], "", $name);
+
+        $this->setConnectionData($connection, [
+            'name' => $name,
+        ]);
+
+        $this->sendAll("User $name join the chat\n", $connection);
     }
 
     /**
@@ -56,12 +98,12 @@ class ConnectionPool
      */
     protected function sendAll($data, ConnectionInterface $except)
     {
-        foreach ($this->connection as $key => $conn) {
+        foreach ($this->connection as $conn) {
             if ($conn == $except) {
                 continue;
             }
 
-            $conn->write($key . '::' . $data);
+            $conn->write($data);
         }
     }
 }
