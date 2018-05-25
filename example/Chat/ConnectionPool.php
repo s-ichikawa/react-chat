@@ -84,6 +84,10 @@ class ConnectionPool
             "\r",
         ], "", $name);
 
+        if (empty($name)) {
+            $connection->write('Enter your name:');
+            return;
+        }
         $this->setConnectionData($connection, [
             'name' => $name,
         ]);
@@ -100,6 +104,11 @@ class ConnectionPool
     {
         foreach ($this->connection as $conn) {
             if ($conn == $except) {
+                continue;
+            }
+
+            $connection_data = $this->getConnectionData($conn);
+            if (empty($connection_data['name'])) {
                 continue;
             }
 
