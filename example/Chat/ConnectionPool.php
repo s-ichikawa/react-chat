@@ -12,6 +12,14 @@ class ConnectionPool
     private $connection;
 
     /**
+     * ConnectionPool constructor.
+     */
+    public function __construct()
+    {
+        $this->connection = new \SplObjectStorage();
+    }
+
+    /**
      * @param $connection ConnectionInterface
      * @return mixed
      */
@@ -27,14 +35,6 @@ class ConnectionPool
     public function setConnectionData(ConnectionInterface $connection, $data = [])
     {
         $this->connection->offsetSet($connection, $data);
-    }
-
-    /**
-     * ConnectionPool constructor.
-     */
-    public function __construct()
-    {
-        $this->connection = new \SplObjectStorage();
     }
 
     /**
@@ -79,10 +79,7 @@ class ConnectionPool
 
     protected function addNewMember($name, ConnectionInterface $connection)
     {
-        $name = str_replace([
-            "\n",
-            "\r",
-        ], "", $name);
+        $name = str_replace(["\n", "\r"], "", $name);
 
         if (empty($name)) {
             $connection->write('Enter your name:');

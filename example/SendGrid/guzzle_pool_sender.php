@@ -11,7 +11,10 @@ use Psr\Http\Message\ResponseInterface;
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 $client = new Client();
-/** @var \Iterator $requests */
+/**
+ * @var \Iterator $requests
+ * @return \Generator
+ */
 $requests = function () {
     for ($i = 0; $i < 1000; $i++) {
         yield new Request('POST', 'https://api.sendgrid.com/v3/mail/send', [

@@ -1,0 +1,8 @@
+@startuml
+title : Blocking I/O
+Application -> Kernel: 　System call - kernel context switch
+Kernel --> : 　Initiate read I/O
+Kernel <-- : Read Response
+Application <- Kernel : Data movement from\nkernel space to user space
+
+@enduml

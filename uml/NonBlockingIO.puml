@@ -1,0 +1,15 @@
+@startuml
+title: Non Blocking I/O
+skinparam Padding 0
+Application -> Kernel: System call - kernel context switch
+Kernel -> : Initiate read I/O
+Application <- Kernel : EAGAIN/EWOULDBLOCK
+
+Application -> Kernel : System call - kernel context switch
+Application <- Kernel : EAGAIN/EWOULDBLOCK
+
+Kernel <- : Read response
+
+Application -> Kernel : System call - kernel context switch
+Application <- Kernel : Data movement from\nkernel space to user space
+@enduml

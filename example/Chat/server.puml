@@ -1,0 +1,12 @@
+@startuml
+User -> server: connection
+server -> ConnectionPool: add connection
+ConnectionPool --> ConnectionPool: init event
+ConnectionPool --> server: send message\nfor asking name
+server --> User: Response
+User -> server: Send name
+server -> ConnectionPool
+ConnectionPool -> ConnectionPool:Pool\nin SplObjectStorage
+ConnectionPool --> server
+server --> User: establish\nconnection
+@enduml

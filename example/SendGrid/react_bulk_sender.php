@@ -8,6 +8,7 @@ use React\HttpClient\Client;
 use React\HttpClient\Request;
 use React\HttpClient\Response;
 use React\Socket\Connector;
+use React\Stream\WritableResourceStream;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -26,16 +27,22 @@ class ReactBulkSender
      * @var Request[]
      */
     private $requests;
+    /**
+     * @var WritableResourceStream
+     */
+    private $writable;
 
     /**
      * Downloader constructor.
      * @param Client $client
      * @param LoopInterface $loop
+     * @param WritableResourceStream $writable
      */
-    public function __construct(Client $client, LoopInterface $loop)
+    public function __construct(Client $client, LoopInterface $loop, WritableResourceStream $writable)
     {
         $this->client = $client;
         $this->loop = $loop;
+        $this->writable = $writable;
     }
 
     public function send()
@@ -45,6 +52,7 @@ class ReactBulkSender
 
     protected function getRequest()
     {
+
         for ($i = 0; $i < 1000; $i++) {
             $payload = json_encode([
                 'personalizations' => [
@@ -81,7 +89,7 @@ class ReactBulkSender
             ], '1.1');
 
             $request->on('response', function (Response $response) use ($i) {
-                echo $i . ':' . $response->getCode() . PHP_EOL;
+                $this->writable->write($i . ':' . $response->getCode() . PHP_EOL);
             });
 
             yield [
@@ -106,11 +114,12 @@ class ReactBulkSender
 }
 
 $loop = Factory::create();
+$writable = new WritableResourceStream(STDOUT, $loop);
 $connector = new Connector($loop, array(
     'dns' => '8.8.8.8',
 ));
 $client = new Client($loop, $connector);
 
-$bulkSender = new ReactBulkSender($client, $loop);
+$bulkSender = new ReactBulkSender($client, $loop, $writable);
 $bulkSender->send();
 
