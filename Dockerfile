@@ -8,4 +8,4 @@ RUN docker-php-ext-enable ev
 #RUN pecl install channel://pecl.php.net/vld-0.14.0
 #RUN docker-php-ext-enable vld
 
-#CMD [ "php", "./example/Chat/server.php" ]
+CMD [ "php", "./example/Chat/server.php" ]
